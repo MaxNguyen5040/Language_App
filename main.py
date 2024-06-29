@@ -8,6 +8,7 @@ dictionaries = {
     'french': {'bonjour': 'hello', 'au revoir': 'goodbye'}
 }
 
+
 def add_flashcard():
     if not current_language:
         print("No language selected. Please select a language first.")
@@ -32,6 +33,23 @@ def add_flashcard():
     flashcards.append({'language': current_language, 'question': question, 'answer': answer})
     save_flashcards()
     print("Flashcard added!")
+
+def edit_flashcard():
+    if not flashcards:
+        print("No flashcards available to edit.")
+        return
+
+    question = input("Enter the question of the flashcard you want to edit: ")
+    for flashcard in flashcards:
+        if flashcard['question'].lower() == question.lower() and flashcard['language'].lower() == current_language.lower():
+            print(f"Current answer: {flashcard['answer']}")
+            new_answer = input("Enter the new answer: ")
+            flashcard['answer'] = new_answer
+            save_flashcards()
+            print("Flashcard updated!")
+            return
+
+    print(f"No flashcard found for question '{question}' in language '{current_language}'.")
 
 def save_flashcards():
     with open('data/flashcards.json', 'w') as f:
@@ -100,10 +118,30 @@ def main():
         elif choice == '3':
             select_language()
         elif choice == '4':
+            edit_flashcard()
+        elif choice == '5':
+            delete_flashcard()
+        elif choice == '6':
             print("Goodbye!")
             break
         else:
             print("Invalid choice, please try again.")
+
+
+def delete_flashcard():
+    if not flashcards:
+        print("No flashcards available to delete.")
+        return
+
+    question = input("Enter the question of the flashcard you want to delete: ")
+    for flashcard in flashcards:
+        if flashcard['question'].lower() == question.lower() and flashcard['language'].lower() == current_language.lower():
+            flashcards.remove(flashcard)
+            save_flashcards()
+            print("Flashcard deleted!")
+            return
+
+    print(f"No flashcard found for question '{question}' in language '{current_language}'.")
 
 if __name__ == "__main__":
     main()
