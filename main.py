@@ -1,5 +1,6 @@
 # src/main.py
 import json
+import csv
 
 flashcards = []
 current_language = None
@@ -8,6 +9,20 @@ dictionaries = {
     'french': {'bonjour': 'hello', 'au revoir': 'goodbye'}
 }
 
+def import_flashcards():
+    global flashcards
+    filename = input("Enter the filename of the CSV file to import: ")
+    try:
+        with open(filename, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                flashcards.append({'language': row['language'], 'question': row['question'], 'answer': row['answer']})
+            save_flashcards()
+            print("Flashcards imported successfully!")
+    except FileNotFoundError:
+        print(f"File '{filename}' not found.")
+    except KeyError:
+        print("CSV file must contain 'language', 'question', and 'answer' columns.")
 
 def add_flashcard():
     if not current_language:
@@ -140,7 +155,8 @@ def main_menu():
     print("4. Edit Flashcard")
     print("5. Delete Flashcard")
     print("6. Review Flashcards")
-    print("7. Exit")
+    print("7. Import Flashcards")
+    print("8. Exit")
 
 def main():
     load_flashcards()
@@ -160,8 +176,9 @@ def main():
         elif choice == '6':
             review_flashcards()
         elif choice == '7':
+            import_flashcards()
+        elif choice == '8':
             print("Goodbye!")
             break
         else:
             print("Invalid choice, please try again.")
-
