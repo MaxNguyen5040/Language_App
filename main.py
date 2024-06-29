@@ -14,6 +14,20 @@ def add_flashcard():
         return
 
     question = input("Enter the question: ")
+    if question in dictionaries[current_language.lower()]:
+        suggested_answer = dictionaries[current_language.lower()][question]
+        print(f"Suggested answer: {suggested_answer}")
+        answer = input("Enter the answer (or press Enter to use the suggested answer): ")
+        if not answer:
+            answer = suggested_answer
+    else:
+        answer = input("Enter the answer: ")
+    
+    flashcards.append({'language': current_language, 'question': question, 'answer': answer})
+    save_flashcards()
+   
+
+    question = input("Enter the question: ")
     answer = input("Enter the answer: ")
     flashcards.append({'language': current_language, 'question': question, 'answer': answer})
     save_flashcards()
