@@ -5,6 +5,8 @@ from colorama import Fore, Style, init
 from authentication import load_users, register_user, login_user
 import hashlib
 
+user_progress = []
+
 init(autoreset=True)
 
 users = []
@@ -14,6 +16,25 @@ dictionaries = {
     'spanish': {'hola': 'hello', 'adios': 'goodbye'},
     'french': {'bonjour': 'hello', 'au revoir': 'goodbye'}
 }
+
+def load_progress():
+    global user_progress
+    try:
+        with open(f'progress_{current_user}.csv', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            user_progress = [row for row in reader]
+    except FileNotFoundError:
+        user_progress = []
+
+def save_progress(score, total):
+    try:
+        with open(f'progress_{current_user}.csv', 'a', newline='') as csvfile:
+            fieldnames = ['date', 'score', 'total']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writerow({'date': datetime.date.today().isoformat(), 'score': score, 'total': total})
+    except Exception as e:
+        print(f"An error occurred while saving progress: {e}")
+
 
 def load_users():
     global users
@@ -184,6 +205,7 @@ def start_quiz():
         flashcard['next_review'] = (datetime.date.today() + datetime.timedelta(days=flashcard['interval'])).isoformat()
 
     save_flashcards()
+    save_progress(score, len(filtered_flashcards))
     print(Fore.GREEN + f"Quiz completed! Your score: {score}/{len(filtered_flashcards)}")
 
 def delete_flashcard():
@@ -232,35 +254,36 @@ def generate_example_flashcards(filename):
         print(f"An error occurred while generating example flashcards: {e}")
 
 def main_menu():
-    print("1. Add Flashcard")
-    print("2. Quiz")
-    print("3. Select Language")
-    print("4. Edit Flashcard")
-    print("5. Delete Flashcard")
-    print("6. Review Flashcards")
-    print("7. Import Flashcards")
-    print("8. Export Flashcards")
-    print("9. Logout")
+    print(Fore.CYAN + "1. Add Flashcard")
+    print(Fore.CYAN + "2. Quiz")
+    print(Fore.CYAN + "3. Select Language")
+    print(Fore.CYAN + "4. Edit Flashcard")
+    print(Fore.CYAN + "5. Delete Flashcard")
+    print(Fore.CYAN + "6. Review Flashcards")
+    print(Fore.CYAN + "7. Import Flashcards")
+    print(Fore.CYAN + "8. Export Flashcards")
+    print(Fore.CYAN + "9. Logout")
 
 def main():
     load_users()
     global current_user
     while not current_user:
-        print("1. Register")
-        print("2. Login")
-        choice = input("Select an option: ")
+        print(Fore.CYAN + "1. Register")
+        print(Fore.CYAN + "2. Login")
+        choice = input(Fore.CYAN + "Select an option: ")
         if choice == '1':
             register_user()
         elif choice == '2':
             if login_user():
                 current_user = input("Enter your username again to confirm: ")
         else:
-            print("Invalid choice, please try again.")
+            print(Fore.RED + "Invalid choice, please try again.")
 
     load_flashcards()
+    load_progress()
     while True:
         main_menu()
-        choice = input("Select an option: ")
+        choice = input(Fore.CYAN + "Select an option: ")
         if choice == '1':
             add_flashcard()
         elif choice == '2':
@@ -281,5 +304,5 @@ def main():
             current_user = None
             break
         else:
-            print("Invalid choice, please try again.")
+            print(Fore.RED + "Invalid choice, please try again.")
 
