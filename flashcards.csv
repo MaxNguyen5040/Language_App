@@ -1,0 +1,10 @@
+{'language': 'Spanish', 'question': 'Hello', 'answer': 'Hola'},
+    {'language': 'Spanish', 'question': 'Goodbye', 'answer': 'Adiós'},
+    {'language': 'Spanish', 'question': 'Please', 'answer': 'Por favor'},
+    {'language': 'Spanish', 'question': 'Thank you', 'answer': 'Gracias'},
+    {'language': 'Spanish', 'question': 'Yes', 'answer': 'Sí'},
+    {'language': 'Spanish', 'question': 'No', 'answer': 'No'},
+    {'language': 'Spanish', 'question': 'Excuse me', 'answer': 'Perdón'},
+    {'language': 'Spanish', 'question': 'How are you?', 'answer': '¿Cómo estás?'},
+    {'language': 'Spanish', 'question': 'Good morning', 'answer': 'Buenos días'},
+    {'language': 'Spanish', 'question': 'Good night', 'answer': 'Buenas noches'}}

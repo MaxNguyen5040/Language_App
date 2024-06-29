@@ -166,6 +166,18 @@ def review_flashcards():
     for flashcard in filtered_flashcards:
         print(f"Question: {flashcard['question']} - Answer: {flashcard['answer']}")
 
+def generate_example_flashcards(filename):
+    try:
+        with open(filename, 'w', newline='') as csvfile:
+            fieldnames = ['language', 'question', 'answer']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for flashcard in example_flashcards:
+                writer.writerow(flashcard)
+            print(f"Example flashcards saved to {filename}")
+    except Exception as e:
+        print(f"An error occurred while generating example flashcards: {e}")
+
 def main_menu():
     print(Fore.CYAN + "1. Add Flashcard")
     print(Fore.CYAN + "2. Quiz")
@@ -178,6 +190,7 @@ def main_menu():
     print(Fore.CYAN + "9. Exit")
 
 def main():
+    generate_example_flashcards('flashcards.csv')
     load_flashcards()
     while True:
         main_menu()
