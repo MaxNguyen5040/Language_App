@@ -53,14 +53,8 @@ def add_flashcard():
             answer = suggested_answer
     else:
         answer = input("Enter the answer: ")
-    
-    flashcards.append({'language': current_language, 'question': question, 'answer': answer})
-    save_flashcards()
-   
 
-    question = input("Enter the question: ")
-    answer = input("Enter the answer: ")
-    flashcards.append({'language': current_language, 'question': question, 'answer': answer})
+    flashcards.append({'language': current_language, 'question': question, 'answer': answer, 'next_review': datetime.date.today().isoformat(), 'interval': 1})
     save_flashcards()
     print("Flashcard added!")
 
@@ -111,12 +105,13 @@ def start_quiz():
         print("No language selected. Please select a language first.")
         return
 
-    filtered_flashcards = [f for f in flashcards if f['language'].lower() == current_language.lower()]
+    today = datetime.date.today().isoformat()
+    filtered_flashcards = [f for f in flashcards if f['language'].lower() == current_language.lower() and f['next_review'] <= today]
     
     if not filtered_flashcards:
-        print(f"No flashcards found for language '{current_language}'")
+        print(f"No flashcards due for review today in language '{current_language}'")
         return
-    
+
     score = 0
     random.shuffle(filtered_flashcards)
     for flashcard in filtered_flashcards:
@@ -125,9 +120,13 @@ def start_quiz():
         if answer.lower() == flashcard['answer'].lower():
             print("Correct!")
             score += 1
+            flashcard['interval'] *= 2
         else:
             print(f"Wrong. The correct answer is: {flashcard['answer']}")
-    
+            flashcard['interval'] = 1
+        flashcard['next_review'] = (datetime.date.today() + datetime.timedelta(days=flashcard['interval'])).isoformat()
+
+    save_flashcards()
     print(f"Quiz completed! Your score: {score}/{len(filtered_flashcards)}")
 
 def delete_flashcard():
@@ -164,6 +163,7 @@ def review_flashcards():
         print(f"Question: {flashcard['question']} - Answer: {flashcard['answer']}")
 
 def main_menu():
+
     print("1. Add Flashcard")
     print("2. Quiz")
     print("3. Select Language")
