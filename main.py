@@ -100,11 +100,47 @@ def start_quiz():
     
     print(f"Quiz completed! Your score: {score}/{len(filtered_flashcards)}")
 
+def delete_flashcard():
+    if not flashcards:
+        print("No flashcards available to delete.")
+        return
+
+    question = input("Enter the question of the flashcard you want to delete: ")
+    for flashcard in flashcards:
+        if flashcard['question'].lower() == question.lower() and flashcard['language'].lower() == current_language.lower():
+            flashcards.remove(flashcard)
+            save_flashcards()
+            print("Flashcard deleted!")
+            return
+
+    print(f"No flashcard found for question '{question}' in language '{current_language}'.")
+
+def review_flashcards():
+    if not flashcards:
+        print("No flashcards available to review.")
+        return
+
+    if not current_language:
+        print("No language selected. Please select a language first.")
+        return
+
+    filtered_flashcards = [f for f in flashcards if f['language'].lower() == current_language.lower()]
+
+    if not filtered_flashcards:
+        print(f"No flashcards found for language '{current_language}'")
+        return
+
+    for flashcard in filtered_flashcards:
+        print(f"Question: {flashcard['question']} - Answer: {flashcard['answer']}")
+
 def main_menu():
     print("1. Add Flashcard")
     print("2. Quiz")
     print("3. Select Language")
-    print("4. Exit")
+    print("4. Edit Flashcard")
+    print("5. Delete Flashcard")
+    print("6. Review Flashcards")
+    print("7. Exit")
 
 def main():
     load_flashcards()
@@ -122,26 +158,10 @@ def main():
         elif choice == '5':
             delete_flashcard()
         elif choice == '6':
+            review_flashcards()
+        elif choice == '7':
             print("Goodbye!")
             break
         else:
             print("Invalid choice, please try again.")
 
-
-def delete_flashcard():
-    if not flashcards:
-        print("No flashcards available to delete.")
-        return
-
-    question = input("Enter the question of the flashcard you want to delete: ")
-    for flashcard in flashcards:
-        if flashcard['question'].lower() == question.lower() and flashcard['language'].lower() == current_language.lower():
-            flashcards.remove(flashcard)
-            save_flashcards()
-            print("Flashcard deleted!")
-            return
-
-    print(f"No flashcard found for question '{question}' in language '{current_language}'.")
-
-if __name__ == "__main__":
-    main()
