@@ -4,6 +4,9 @@ import csv
 from colorama import Fore, Style, init
 init(autoreset=True)
 
+import hashlib
+users = []
+
 
 flashcards = []
 current_language = None
@@ -12,6 +15,28 @@ dictionaries = {
     'french': {'bonjour': 'hello', 'au revoir': 'goodbye'}
 }
 
+def load_users():
+    global users
+    try:
+        with open('users.csv', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            users = [row for row in reader]
+    except FileNotFoundError:
+        users = []
+
+def save_users():
+    try:
+        with open('users.csv', 'w', newline='') as csvfile:
+            fieldnames = ['username', 'password']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for user in users:
+                writer.writerow(user)
+    except Exception as e:
+        print(f"An error occurred while saving users: {e}")
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 def export_flashcards():
     filename = input("Enter the filename to export the flashcards to: ")
@@ -26,6 +51,27 @@ def export_flashcards():
     except Exception as e:
         print(f"An error occurred while exporting flashcards: {e}")
 
+
+def register_user():
+    username = input("Enter a username: ")
+    if any(user['username'] == username for user in users):
+        print("Username already taken.")
+        return
+    password = input("Enter a password: ")
+    users.append({'username': username, 'password': hash_password(password)})
+    save_users()
+    print("User registered successfully!")
+
+def login_user():
+    username = input("Enter your username: ")
+    password = input("Enter your password: ")
+    hashed_password = hash_password(password)
+    for user in users:
+        if user['username'] == username and user['password'] == hashed_password:
+            print("Login successful!")
+            return True
+    print("Invalid username or password.")
+    return False
 
 def import_flashcards():
     global flashcards
@@ -179,40 +225,22 @@ def generate_example_flashcards(filename):
         print(f"An error occurred while generating example flashcards: {e}")
 
 def main_menu():
-    print(Fore.CYAN + "1. Add Flashcard")
-    print(Fore.CYAN + "2. Quiz")
-    print(Fore.CYAN + "3. Select Language")
-    print(Fore.CYAN + "4. Edit Flashcard")
-    print(Fore.CYAN + "5. Delete Flashcard")
-    print(Fore.CYAN + "6. Review Flashcards")
-    print(Fore.CYAN + "7. Import Flashcards")
-    print(Fore.CYAN + "8. Export Flashcards")
-    print(Fore.CYAN + "9. Exit")
-
+    print("1. Register")
+    print("2. Login")
+    print("3. Exit")
+    
 def main():
-    generate_example_flashcards('flashcards.csv')
-    load_flashcards()
+    load_users()
     while True:
         main_menu()
-        choice = input(Fore.CYAN + "Select an option: ")
+        choice = input("Select an option: ")
         if choice == '1':
-            add_flashcard()
+            register_user()
         elif choice == '2':
-            start_quiz()
+            if login_user():
+                break
         elif choice == '3':
-            select_language()
-        elif choice == '4':
-            edit_flashcard()
-        elif choice == '5':
-            delete_flashcard()
-        elif choice == '6':
-            review_flashcards()
-        elif choice == '7':
-            import_flashcards()
-        elif choice == '8':
-            export_flashcards()
-        elif choice == '9':
-            print(Fore.CYAN + "Goodbye!")
+            print("Goodbye!")
             break
         else:
-            print(Fore.RED + "Invalid choice, please try again.")
+            print("Invalid choice, please try again.")
