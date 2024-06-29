@@ -125,14 +125,22 @@ def edit_flashcard():
     print(f"No flashcard found for question '{question}' in language '{current_language}'.")
 
 def save_flashcards():
-    with open('data/flashcards.json', 'w') as f:
-        json.dump(flashcards, f)
+    try:
+        with open(f'flashcards_{current_user}.csv', 'w', newline='') as csvfile:
+            fieldnames = ['language', 'question', 'answer', 'next_review', 'interval']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for flashcard in flashcards:
+                writer.writerow(flashcard)
+    except Exception as e:
+        print(f"An error occurred while saving flashcards: {e}")
 
 def load_flashcards():
     global flashcards
     try:
-        with open('data/flashcards.json', 'r') as f:
-            flashcards = json.load(f)
+        with open(f'flashcards_{current_user}.csv', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            flashcards = [row for row in reader]
     except FileNotFoundError:
         flashcards = []
 
@@ -245,7 +253,7 @@ def main():
             register_user()
         elif choice == '2':
             if login_user():
-                current_user = True
+                current_user = input("Enter your username again to confirm: ")
         else:
             print("Invalid choice, please try again.")
 
@@ -274,3 +282,4 @@ def main():
             break
         else:
             print("Invalid choice, please try again.")
+
