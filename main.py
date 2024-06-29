@@ -1,29 +1,44 @@
+# src/main.py
+import json
+
+flashcards = []
 current_language = None
-
-def main_menu():
-    print("1. Add Flashcard")
-    print("2. Quiz")
-    print("3. Select Language")
-    print("4. Exit")
-
-def main():
-    while True:
-        main_menu()
-        choice = input("Select an option: ")
-        if choice == '1':
-            add_flashcard()
-        elif choice == '2':
-            start_quiz()
-        elif choice == '3':
-            select_language()
-        elif choice == '4':
-            print("Goodbye!")
-            break
-        else:
-            print("Invalid choice, please try again.")
+dictionaries = {
+    'spanish': {'hola': 'hello', 'adios': 'goodbye'},
+    'french': {'bonjour': 'hello', 'au revoir': 'goodbye'}
+}
 
 def add_flashcard():
-    print("Add Flashcard")
+    if not current_language:
+        print("No language selected. Please select a language first.")
+        return
+
+    question = input("Enter the question: ")
+    answer = input("Enter the answer: ")
+    flashcards.append({'language': current_language, 'question': question, 'answer': answer})
+    save_flashcards()
+    print("Flashcard added!")
+
+def save_flashcards():
+    with open('data/flashcards.json', 'w') as f:
+        json.dump(flashcards, f)
+
+def load_flashcards():
+    global flashcards
+    try:
+        with open('data/flashcards.json', 'r') as f:
+            flashcards = json.load(f)
+    except FileNotFoundError:
+        flashcards = []
+
+def select_language():
+    global current_language
+    language = input("Enter the language you want to use: ")
+    if language.lower() in dictionaries:
+        current_language = language
+        print(f"Language set to: {current_language}")
+    else:
+        print(f"No dictionary available for '{language}'. Please add flashcards manually.")
 
 def start_quiz():
     if not flashcards:
@@ -46,18 +61,35 @@ def start_quiz():
         print(f"Question: {flashcard['question']}")
         answer = input("Your answer: ")
         if answer.lower() == flashcard['answer'].lower():
-            print("Correct!!!")
+            print("Correct!")
             score += 1
         else:
             print(f"Wrong. The correct answer is: {flashcard['answer']}")
     
     print(f"Quiz completed! Your score: {score}/{len(filtered_flashcards)}")
 
-def select_language():
-    global current_language
-    language = input("Enter the language you want to use: ")
-    current_language = language
-    print(f"Language set to: {current_language}")
+def main_menu():
+    print("1. Add Flashcard")
+    print("2. Quiz")
+    print("3. Select Language")
+    print("4. Exit")
 
+def main():
+    load_flashcards()
+    while True:
+        main_menu()
+        choice = input("Select an option: ")
+        if choice == '1':
+            add_flashcard()
+        elif choice == '2':
+            start_quiz()
+        elif choice == '3':
+            select_language()
+        elif choice == '4':
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice, please try again.")
 
-main()
+if __name__ == "__main__":
+    main()
