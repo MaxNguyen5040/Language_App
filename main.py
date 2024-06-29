@@ -33,7 +33,7 @@ def save_users():
             for user in users:
                 writer.writerow(user)
     except Exception as e:
-        print(f"An error occurred while saving users: {e}"))
+        print(f"An error occurred while saving users: {e}")
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -146,7 +146,6 @@ def select_language():
         print(f"No dictionary available for '{language}'. Please add flashcards manually.")
 
 def start_quiz():
-    def start_quiz():
     if not flashcards:
         print(Fore.RED + "No flashcards available. Please add some first.")
         return
