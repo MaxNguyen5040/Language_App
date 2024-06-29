@@ -2,12 +2,12 @@
 import json
 import csv
 from colorama import Fore, Style, init
+from authentication import load_users, register_user, login_user
+import hashlib
+
 init(autoreset=True)
 
-import hashlib
 users = []
-
-
 flashcards = []
 current_language = None
 dictionaries = {
@@ -33,7 +33,7 @@ def save_users():
             for user in users:
                 writer.writerow(user)
     except Exception as e:
-        print(f"An error occurred while saving users: {e}")
+        print(f"An error occurred while saving users: {e}"))
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -225,22 +225,53 @@ def generate_example_flashcards(filename):
         print(f"An error occurred while generating example flashcards: {e}")
 
 def main_menu():
-    print("1. Register")
-    print("2. Login")
-    print("3. Exit")
-    
+    print("1. Add Flashcard")
+    print("2. Quiz")
+    print("3. Select Language")
+    print("4. Edit Flashcard")
+    print("5. Delete Flashcard")
+    print("6. Review Flashcards")
+    print("7. Import Flashcards")
+    print("8. Export Flashcards")
+    print("9. Logout")
+
 def main():
     load_users()
-    while True:
-        main_menu()
+    global current_user
+    while not current_user:
+        print("1. Register")
+        print("2. Login")
         choice = input("Select an option: ")
         if choice == '1':
             register_user()
         elif choice == '2':
             if login_user():
-                break
+                current_user = True
+        else:
+            print("Invalid choice, please try again.")
+
+    load_flashcards()
+    while True:
+        main_menu()
+        choice = input("Select an option: ")
+        if choice == '1':
+            add_flashcard()
+        elif choice == '2':
+            start_quiz()
         elif choice == '3':
-            print("Goodbye!")
+            select_language()
+        elif choice == '4':
+            edit_flashcard()
+        elif choice == '5':
+            delete_flashcard()
+        elif choice == '6':
+            review_flashcards()
+        elif choice == '7':
+            import_flashcards()
+        elif choice == '8':
+            export_flashcards()
+        elif choice == '9':
+            current_user = None
             break
         else:
             print("Invalid choice, please try again.")
