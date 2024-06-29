@@ -9,6 +9,21 @@ dictionaries = {
     'french': {'bonjour': 'hello', 'au revoir': 'goodbye'}
 }
 
+
+def export_flashcards():
+    filename = input("Enter the filename to export the flashcards to: ")
+    try:
+        with open(filename, 'w', newline='') as csvfile:
+            fieldnames = ['language', 'question', 'answer']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for flashcard in flashcards:
+                writer.writerow(flashcard)
+            print("Flashcards exported successfully!")
+    except Exception as e:
+        print(f"An error occurred while exporting flashcards: {e}")
+
+
 def import_flashcards():
     global flashcards
     filename = input("Enter the filename of the CSV file to import: ")
@@ -156,7 +171,8 @@ def main_menu():
     print("5. Delete Flashcard")
     print("6. Review Flashcards")
     print("7. Import Flashcards")
-    print("8. Exit")
+    print("8. Export Flashcards")
+    print("9. Exit")
 
 def main():
     load_flashcards()
@@ -178,6 +194,8 @@ def main():
         elif choice == '7':
             import_flashcards()
         elif choice == '8':
+            export_flashcards()
+        elif choice == '9':
             print("Goodbye!")
             break
         else:
