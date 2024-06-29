@@ -1,6 +1,9 @@
 # src/main.py
 import json
 import csv
+from colorama import Fore, Style, init
+init(autoreset=True)
+
 
 flashcards = []
 current_language = None
@@ -41,22 +44,22 @@ def import_flashcards():
 
 def add_flashcard():
     if not current_language:
-        print("No language selected. Please select a language first.")
+        print(Fore.RED + "No language selected. Please select a language first.")
         return
 
-    question = input("Enter the question: ")
+    question = input(Fore.GREEN + "Enter the question: ")
     if question in dictionaries[current_language.lower()]:
         suggested_answer = dictionaries[current_language.lower()][question]
-        print(f"Suggested answer: {suggested_answer}")
-        answer = input("Enter the answer (or press Enter to use the suggested answer): ")
+        print(Fore.YELLOW + f"Suggested answer: {suggested_answer}")
+        answer = input(Fore.GREEN + "Enter the answer (or press Enter to use the suggested answer): ")
         if not answer:
             answer = suggested_answer
     else:
-        answer = input("Enter the answer: ")
+        answer = input(Fore.GREEN + "Enter the answer: ")
 
     flashcards.append({'language': current_language, 'question': question, 'answer': answer, 'next_review': datetime.date.today().isoformat(), 'interval': 1})
     save_flashcards()
-    print("Flashcard added!")
+    print(Fore.GREEN + "Flashcard added!")
 
 def edit_flashcard():
     if not flashcards:
@@ -97,37 +100,38 @@ def select_language():
         print(f"No dictionary available for '{language}'. Please add flashcards manually.")
 
 def start_quiz():
+    def start_quiz():
     if not flashcards:
-        print("No flashcards available. Please add some first.")
+        print(Fore.RED + "No flashcards available. Please add some first.")
         return
     
     if not current_language:
-        print("No language selected. Please select a language first.")
+        print(Fore.RED + "No language selected. Please select a language first.")
         return
 
     today = datetime.date.today().isoformat()
     filtered_flashcards = [f for f in flashcards if f['language'].lower() == current_language.lower() and f['next_review'] <= today]
     
     if not filtered_flashcards:
-        print(f"No flashcards due for review today in language '{current_language}'")
+        print(Fore.RED + f"No flashcards due for review today in language '{current_language}'")
         return
 
     score = 0
     random.shuffle(filtered_flashcards)
     for flashcard in filtered_flashcards:
-        print(f"Question: {flashcard['question']}")
-        answer = input("Your answer: ")
+        print(Fore.BLUE + f"Question: {flashcard['question']}")
+        answer = input(Fore.GREEN + "Your answer: ")
         if answer.lower() == flashcard['answer'].lower():
-            print("Correct!")
+            print(Fore.GREEN + "Correct!")
             score += 1
             flashcard['interval'] *= 2
         else:
-            print(f"Wrong. The correct answer is: {flashcard['answer']}")
+            print(Fore.RED + f"Wrong. The correct answer is: {flashcard['answer']}")
             flashcard['interval'] = 1
         flashcard['next_review'] = (datetime.date.today() + datetime.timedelta(days=flashcard['interval'])).isoformat()
 
     save_flashcards()
-    print(f"Quiz completed! Your score: {score}/{len(filtered_flashcards)}")
+    print(Fore.GREEN + f"Quiz completed! Your score: {score}/{len(filtered_flashcards)}")
 
 def delete_flashcard():
     if not flashcards:
@@ -163,22 +167,21 @@ def review_flashcards():
         print(f"Question: {flashcard['question']} - Answer: {flashcard['answer']}")
 
 def main_menu():
-
-    print("1. Add Flashcard")
-    print("2. Quiz")
-    print("3. Select Language")
-    print("4. Edit Flashcard")
-    print("5. Delete Flashcard")
-    print("6. Review Flashcards")
-    print("7. Import Flashcards")
-    print("8. Export Flashcards")
-    print("9. Exit")
+    print(Fore.CYAN + "1. Add Flashcard")
+    print(Fore.CYAN + "2. Quiz")
+    print(Fore.CYAN + "3. Select Language")
+    print(Fore.CYAN + "4. Edit Flashcard")
+    print(Fore.CYAN + "5. Delete Flashcard")
+    print(Fore.CYAN + "6. Review Flashcards")
+    print(Fore.CYAN + "7. Import Flashcards")
+    print(Fore.CYAN + "8. Export Flashcards")
+    print(Fore.CYAN + "9. Exit")
 
 def main():
     load_flashcards()
     while True:
         main_menu()
-        choice = input("Select an option: ")
+        choice = input(Fore.CYAN + "Select an option: ")
         if choice == '1':
             add_flashcard()
         elif choice == '2':
@@ -196,7 +199,7 @@ def main():
         elif choice == '8':
             export_flashcards()
         elif choice == '9':
-            print("Goodbye!")
+            print(Fore.CYAN + "Goodbye!")
             break
         else:
-            print("Invalid choice, please try again.")
+            print(Fore.RED + "Invalid choice, please try again.")
