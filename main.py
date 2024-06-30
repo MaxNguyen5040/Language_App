@@ -130,20 +130,37 @@ def add_flashcard():
 
 def edit_flashcard():
     if not flashcards:
-        print("No flashcards available to edit.")
+        print(Fore.RED + "No flashcards available. Please add some first.")
+        return
+    
+    if not current_language:
+        print(Fore.RED + "No language selected. Please select a language first.")
+        return
+    
+    for i, flashcard in enumerate(flashcards):
+        if flashcard['language'].lower() == current_language.lower():
+            print(Fore.CYAN + f"{i+1}. {flashcard['question']} - {flashcard['answer']}")
+    
+    try:
+        index = int(input(Fore.GREEN + "Enter the number of the flashcard you want to edit: ")) - 1
+        if flashcards[index]['language'].lower() != current_language.lower():
+            print(Fore.RED + "Invalid selection. Please select a flashcard from the current language.")
+            return
+    except (ValueError, IndexError):
+        print(Fore.RED + "Invalid selection. Please enter a valid number.")
         return
 
-    question = input("Enter the question of the flashcard you want to edit: ")
-    for flashcard in flashcards:
-        if flashcard['question'].lower() == question.lower() and flashcard['language'].lower() == current_language.lower():
-            print(f"Current answer: {flashcard['answer']}")
-            new_answer = input("Enter the new answer: ")
-            flashcard['answer'] = new_answer
-            save_flashcards()
-            print("Flashcard updated!")
-            return
-
-    print(f"No flashcard found for question '{question}' in language '{current_language}'.")
+    new_question = input(Fore.GREEN + "Enter the new question (or press Enter to keep the current one): ")
+    if not new_question:
+        new_question = flashcards[index]['question']
+    new_answer = input(Fore.GREEN + "Enter the new answer (or press Enter to keep the current one): ")
+    if not new_answer:
+        new_answer = flashcards[index]['answer']
+    
+    flashcards[index]['question'] = new_question
+    flashcards[index]['answer'] = new_answer
+    save_flashcards()
+    print(Fore.GREEN + "Flashcard updated!")
 
 def save_flashcards():
     try:
