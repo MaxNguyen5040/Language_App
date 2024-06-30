@@ -311,18 +311,21 @@ def view_progress():
     for entry in user_progress:
         print(Fore.CYAN + f"{entry['date']} | {entry['score']}    | {entry['total']}")
 
+def search_flashcards():
+    if not flashcards:
+        print(Fore.RED + "No flashcards available. Please add some first.")
+        return
+    
+    keyword = input(Fore.GREEN + "Enter a keyword to search for: ").lower()
+    search_results = [f for f in flashcards if keyword in f['question'].lower() or keyword in f['answer'].lower()]
+    
+    if not search_results:
+        print(Fore.RED + "No flashcards found matching the keyword.")
+        return
 
-def main_menu():
-    print(Fore.CYAN + "1. Add Flashcard")
-    print(Fore.CYAN + "2. Quiz")
-    print(Fore.CYAN + "3. Select Language")
-    print(Fore.CYAN + "4. Edit Flashcard")
-    print(Fore.CYAN + "5. Delete Flashcard")
-    print(Fore.CYAN + "6. Review Flashcards")
-    print(Fore.CYAN + "7. Import Flashcards")
-    print(Fore.CYAN + "8. Export Flashcards")
-    print(Fore.CYAN + "9. View Progress")
-    print(Fore.CYAN + "10. Logout")
+    for i, flashcard in enumerate(search_results):
+        print(Fore.CYAN + f"{i+1}. {flashcard['question']} - {flashcard['answer']}")
+
 
 def main():
     load_users()
@@ -363,6 +366,8 @@ def main():
         elif choice == '9':
             view_progress()
         elif choice == '10':
+            search_flashcards()
+        elif choice == '11':
             current_user = None
             break
         else:
