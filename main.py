@@ -175,10 +175,12 @@ def save_flashcards():
 
 def load_flashcards():
     global flashcards
+    flashcards = []
     try:
-        with open(f'flashcards_{current_user}.csv', newline='') as csvfile:
+        with open(f'flashcards_{current_user}.csv', newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
-            flashcards = [row for row in reader]
+            for row in reader:
+                flashcards.append(row)
     except FileNotFoundError:
         flashcards = []
 
@@ -260,21 +262,28 @@ def review_flashcards():
         print(Fore.RED + "No flashcards available. Please add some first.")
         return
     
-    if not current_language:
-        print(Fore.RED + "No language selected. Please select a language first.")
+    print(Fore.CYAN + "Available languages:")
+    languages = list(set(flashcard['language'].lower() for flashcard in flashcards))
+    for i, language in enumerate(languages):
+        print(Fore.CYAN + f"{i+1}. {language}")
+    
+    try:
+        language_index = int(input(Fore.GREEN + "Select a language to review: ")) - 1
+        selected_language = languages[language_index]
+    except (ValueError, IndexError):
+        print(Fore.RED + "Invalid selection. Please enter a valid number.")
         return
-
-    today = datetime.date.today().isoformat()
-    filtered_flashcards = [f for f in flashcards if f['language'].lower() == current_language.lower()]
-
+    
+    filtered_flashcards = [f for f in flashcards if f['language'].lower() == selected_language]
+    
     if not filtered_flashcards:
-        print(Fore.RED + f"No flashcards available in language '{current_language}'")
+        print(Fore.RED + f"No flashcards available in language '{selected_language}'")
         return
 
     random.shuffle(filtered_flashcards)
     for flashcard in filtered_flashcards:
         print(Fore.BLUE + f"Question: {flashcard['question']}")
-        answer = input(Fore.GREEN + "Press Enter to reveal the answer...")
+        input(Fore.GREEN + "Press Enter to reveal the answer...")
         print(Fore.GREEN + f"Answer: {flashcard['answer']}")
         input(Fore.YELLOW + "Press Enter to continue...")
 
