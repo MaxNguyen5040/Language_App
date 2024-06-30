@@ -57,3 +57,21 @@ function loadProgress() {
 if (window.location.pathname.endsWith('view_progress.html')) {
     loadProgress();
 }
+
+function loadExampleProgress() {
+    fetch('progress.json')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('progress-table').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+            data.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${entry.date}</td><td>${entry.score}</td><td>${entry.total}</td>`;
+                tableBody.appendChild(row);
+            });
+        });
+}
+
+if (window.location.pathname.endsWith('view_progress.html')) {
+    loadExampleProgress();
+}
