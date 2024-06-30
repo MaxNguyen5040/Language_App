@@ -75,3 +75,46 @@ function loadExampleProgress() {
 if (window.location.pathname.endsWith('view_progress.html')) {
     loadExampleProgress();
 }
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const progressData = [
+        { date: '2024-06-24 10:00', language: 'Spanish', score: 7, total: 10 },
+        { date: '2024-06-24 10:15', language: 'French', score: 8, total: 10 },
+        { date: '2024-06-24 10:30', language: 'German', score: 9, total: 10 },
+        { date: '2024-06-24 10:45', language: 'Spanish', score: 6, total: 10 },
+        { date: '2024-06-24 11:00', language: 'French', score: 8, total: 10 },
+        { date: '2024-06-24 11:15', language: 'German', score: 23, total: 25 },
+        { date: '2024-06-24 11:30', language: 'Spanish', score: 19, total: 20 },
+        { date: '2024-06-24 11:45', language: 'French', score: 22, total: 25 },
+    ];
+
+    const summaryData = {};
+
+    progressData.forEach(entry => {
+        if (!summaryData[entry.language]) {
+            summaryData[entry.language] = { totalScore: 0, totalEntries: 0, totalPossible: 0 };
+        }
+        summaryData[entry.language].totalScore += entry.score;
+        summaryData[entry.language].totalEntries += 1;
+        summaryData[entry.language].totalPossible += entry.total;
+    });
+
+    const tableBody = document.getElementById('summary-table').getElementsByTagName('tbody')[0];
+
+    Object.keys(summaryData).forEach(language => {
+        const row = document.createElement('tr');
+        const totalScore = summaryData[language].totalScore;
+        const totalEntries = summaryData[language].totalEntries;
+        const totalPossible = summaryData[language].totalPossible;
+        const averageScore = (totalScore / totalPossible) * 100;
+
+        row.innerHTML = `
+            <td>${language}</td>
+            <td>${totalScore} / ${totalPossible}</td>
+            <td>${averageScore.toFixed(2)}%</td>
+        `;
+        tableBody.appendChild(row);
+    });
+});
