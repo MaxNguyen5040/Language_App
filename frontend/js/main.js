@@ -42,3 +42,18 @@ function checkAnswer() {
 if (window.location.pathname.endsWith('quiz.html')) {
     loadQuiz();
 }
+
+function loadProgress() {
+    const progress = JSON.parse(localStorage.getItem('progress')) || [];
+    const tableBody = document.getElementById('progress-table').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = '';
+    progress.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${entry.date}</td><td>${entry.score}</td><td>${entry.total}</td>`;
+        tableBody.appendChild(row);
+    });
+}
+
+if (window.location.pathname.endsWith('view_progress.html')) {
+    loadProgress();
+}
