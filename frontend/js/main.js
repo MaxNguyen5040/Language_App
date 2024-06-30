@@ -14,3 +14,31 @@ document.getElementById('flashcard-form').addEventListener('submit', function(ev
     alert('Flashcard added successfully!');
     document.getElementById('flashcard-form').reset();
 });
+
+
+function loadQuiz() {
+    const flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+    if (flashcards.length === 0) {
+        document.getElementById('quiz-container').innerHTML = '<p>No flashcards available.</p>';
+        return;
+    }
+    const flashcard = flashcards[Math.floor(Math.random() * flashcards.length)];
+    document.getElementById('question').innerText = flashcard.question;
+    document.getElementById('question').dataset.answer = flashcard.answer;
+}
+
+function checkAnswer() {
+    const userAnswer = document.getElementById('user-answer').value;
+    const correctAnswer = document.getElementById('question').dataset.answer;
+    if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+        document.getElementById('result').innerText = 'Correct!';
+    } else {
+        document.getElementById('result').innerText = `Incorrect. The correct answer was: ${correctAnswer}`;
+    }
+    document.getElementById('user-answer').value = '';
+    loadQuiz();
+}
+
+if (window.location.pathname.endsWith('quiz.html')) {
+    loadQuiz();
+}
