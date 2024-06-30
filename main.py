@@ -103,6 +103,21 @@ def login_user():
     print("Invalid username or password.")
     return False
 
+def import_flashcards_from_json():
+    try:
+        with open(f'flashcards_{current_user}.json', 'r', encoding='utf-8') as jsonfile:
+            imported_flashcards = json.load(jsonfile)
+        flashcards.extend(imported_flashcards)
+        save_flashcards()
+        print(Fore.GREEN + "Flashcards successfully imported from JSON.")
+    except FileNotFoundError:
+        print(Fore.RED + "No JSON file found to import.")
+    except json.JSONDecodeError:
+        print(Fore.RED + "Error decoding JSON file.")
+    except Exception as e:
+        print(Fore.RED + f"An error occurred while importing flashcards: {e}")
+
+
 def import_flashcards():
     global flashcards
     filename = input("Enter the filename of the CSV file to import: ")
@@ -342,15 +357,16 @@ def main_menu():
     print(Fore.CYAN + "4. Edit Flashcard")
     print(Fore.CYAN + "5. Delete Flashcard")
     print(Fore.CYAN + "6. Review Flashcards")
-    print(Fore.CYAN + "7. Import Flashcards")
+    print(Fore.CYAN + "7. Import Flashcards from CSV")
     print(Fore.CYAN + "8. Export Flashcards to CSV")
     print(Fore.CYAN + "9. View Progress")
     print(Fore.CYAN + "10. Search Flashcards")
     print(Fore.CYAN + "11. Export Flashcards to JSON")
-    print(Fore.CYAN + "12. Logout")
+    print(Fore.CYAN + "12. Import Flashcards from JSON")
+    print(Fore.CYAN + "13. Logout")
 
 def main():
-     load_users()
+    load_users()
     global current_user
     while not current_user:
         print(Fore.CYAN + "1. Register")
@@ -392,6 +408,8 @@ def main():
         elif choice == '11':
             export_flashcards_to_json()
         elif choice == '12':
+            import_flashcards_from_json()
+        elif choice == '13':
             current_user = None
             break
         else:
