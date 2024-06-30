@@ -26,6 +26,15 @@ def load_progress():
     except FileNotFoundError:
         user_progress = []
 
+def export_flashcards_to_json():
+    try:
+        with open(f'flashcards_{current_user}.json', 'w', encoding='utf-8') as jsonfile:
+            json.dump(flashcards, jsonfile, ensure_ascii=False, indent=4)
+        print(Fore.GREEN + "Flashcards successfully exported to JSON.")
+    except Exception as e:
+        print(Fore.RED + f"An error occurred while exporting flashcards: {e}")
+
+
 def save_progress(score, total):
     try:
         with open(f'progress_{current_user}.csv', 'a', newline='') as csvfile:
@@ -326,9 +335,22 @@ def search_flashcards():
     for i, flashcard in enumerate(search_results):
         print(Fore.CYAN + f"{i+1}. {flashcard['question']} - {flashcard['answer']}")
 
+def main_menu():
+    print(Fore.CYAN + "1. Add Flashcard")
+    print(Fore.CYAN + "2. Quiz")
+    print(Fore.CYAN + "3. Select Language")
+    print(Fore.CYAN + "4. Edit Flashcard")
+    print(Fore.CYAN + "5. Delete Flashcard")
+    print(Fore.CYAN + "6. Review Flashcards")
+    print(Fore.CYAN + "7. Import Flashcards")
+    print(Fore.CYAN + "8. Export Flashcards to CSV")
+    print(Fore.CYAN + "9. View Progress")
+    print(Fore.CYAN + "10. Search Flashcards")
+    print(Fore.CYAN + "11. Export Flashcards to JSON")
+    print(Fore.CYAN + "12. Logout")
 
 def main():
-    load_users()
+     load_users()
     global current_user
     while not current_user:
         print(Fore.CYAN + "1. Register")
@@ -368,6 +390,8 @@ def main():
         elif choice == '10':
             search_flashcards()
         elif choice == '11':
+            export_flashcards_to_json()
+        elif choice == '12':
             current_user = None
             break
         else:
