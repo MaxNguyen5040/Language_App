@@ -227,18 +227,33 @@ def start_quiz():
 
 def delete_flashcard():
     if not flashcards:
-        print("No flashcards available to delete.")
+        print(Fore.RED + "No flashcards available. Please add some first.")
         return
-
-    question = input("Enter the question of the flashcard you want to delete: ")
-    for flashcard in flashcards:
-        if flashcard['question'].lower() == question.lower() and flashcard['language'].lower() == current_language.lower():
-            flashcards.remove(flashcard)
-            save_flashcards()
-            print("Flashcard deleted!")
+    
+    if not current_language:
+        print(Fore.RED + "No language selected. Please select a language first.")
+        return
+    
+    for i, flashcard in enumerate(flashcards):
+        if flashcard['language'].lower() == current_language.lower():
+            print(Fore.CYAN + f"{i+1}. {flashcard['question']} - {flashcard['answer']}")
+    
+    try:
+        index = int(input(Fore.GREEN + "Enter the number of the flashcard you want to delete: ")) - 1
+        if flashcards[index]['language'].lower() != current_language.lower():
+            print(Fore.RED + "Invalid selection. Please select a flashcard from the current language.")
             return
-
-    print(f"No flashcard found for question '{question}' in language '{current_language}'.")
+    except (ValueError, IndexError):
+        print(Fore.RED + "Invalid selection. Please enter a valid number.")
+        return
+    
+    confirmation = input(Fore.RED + "Are you sure you want to delete this flashcard? (y/n): ").lower()
+    if confirmation == 'y':
+        flashcards.pop(index)
+        save_flashcards()
+        print(Fore.GREEN + "Flashcard deleted!")
+    else:
+        print(Fore.YELLOW + "Flashcard deletion cancelled.")
 
 def review_flashcards():
     if not flashcards:
