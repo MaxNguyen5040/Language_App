@@ -257,21 +257,28 @@ def delete_flashcard():
 
 def review_flashcards():
     if not flashcards:
-        print("No flashcards available to review.")
+        print(Fore.RED + "No flashcards available. Please add some first.")
         return
-
+    
     if not current_language:
-        print("No language selected. Please select a language first.")
+        print(Fore.RED + "No language selected. Please select a language first.")
         return
 
+    today = datetime.date.today().isoformat()
     filtered_flashcards = [f for f in flashcards if f['language'].lower() == current_language.lower()]
 
     if not filtered_flashcards:
-        print(f"No flashcards found for language '{current_language}'")
+        print(Fore.RED + f"No flashcards available in language '{current_language}'")
         return
 
+    random.shuffle(filtered_flashcards)
     for flashcard in filtered_flashcards:
-        print(f"Question: {flashcard['question']} - Answer: {flashcard['answer']}")
+        print(Fore.BLUE + f"Question: {flashcard['question']}")
+        answer = input(Fore.GREEN + "Press Enter to reveal the answer...")
+        print(Fore.GREEN + f"Answer: {flashcard['answer']}")
+        input(Fore.YELLOW + "Press Enter to continue...")
+
+    print(Fore.GREEN + "Flashcard review completed!")
 
 def generate_example_flashcards(filename):
     try:
@@ -285,6 +292,17 @@ def generate_example_flashcards(filename):
     except Exception as e:
         print(f"An error occurred while generating example flashcards: {e}")
 
+def view_progress():
+    if not user_progress:
+        print(Fore.RED + "No progress available.")
+        return
+    
+    print(Fore.CYAN + "Date       | Score | Total")
+    print(Fore.CYAN + "-----------|-------|------")
+    for entry in user_progress:
+        print(Fore.CYAN + f"{entry['date']} | {entry['score']}    | {entry['total']}")
+
+
 def main_menu():
     print(Fore.CYAN + "1. Add Flashcard")
     print(Fore.CYAN + "2. Quiz")
@@ -294,7 +312,8 @@ def main_menu():
     print(Fore.CYAN + "6. Review Flashcards")
     print(Fore.CYAN + "7. Import Flashcards")
     print(Fore.CYAN + "8. Export Flashcards")
-    print(Fore.CYAN + "9. Logout")
+    print(Fore.CYAN + "9. View Progress")
+    print(Fore.CYAN + "10. Logout")
 
 def main():
     load_users()
@@ -333,8 +352,9 @@ def main():
         elif choice == '8':
             export_flashcards()
         elif choice == '9':
+            view_progress()
+        elif choice == '10':
             current_user = None
             break
         else:
             print(Fore.RED + "Invalid choice, please try again.")
-
